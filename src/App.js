@@ -45,6 +45,22 @@ addCredit = (e) => {
   });
   e.target.reset();
 };
+addDebit = (e) => {
+  e.preventDefault();
+  const description = e.target.description.value;
+  const amount = Number(e.target.amount.value);
+  const entry = {
+    description,
+    amount,
+    date: new Date().toISOString().slice(0,10), // yyyy-mm-dd
+  };
+  const debitList = [entry, ...this.state.debitList];
+  this.setState({
+    debitList,
+    accountBalance: this.calcBalance(this.state.creditList, debitList),
+  });
+  e.target.reset();
+};
 
   // Balance = total credits - total debits
   calcBalance = (credits = this.state.creditList, debits = this.state.debitList) => {
@@ -100,7 +116,14 @@ addCredit = (e) => {
         accountBalance={this.state.accountBalance}
       />
     );
-    const DebitsComponent  = () => (<Debits  debits={this.state.debitList}  />);
+    const DebitsComponent = () => (
+      <Debits
+        debits={this.state.debitList}
+        addDebit={this.addDebit}
+        accountBalance={this.state.accountBalance}
+      />
+    );
+
 
     return (
       <Router basename="/assignment-3">
