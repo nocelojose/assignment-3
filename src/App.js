@@ -29,6 +29,22 @@ class App extends Component {
       }
     };
   }
+addCredit = (e) => {
+  e.preventDefault();
+  const description = e.target.description.value;
+  const amount = Number(e.target.amount.value);
+  const entry = {
+    description,
+    amount,
+    date: new Date().toISOString().slice(0,10), 
+  };
+  const creditList = [entry, ...this.state.creditList];
+  this.setState({
+    creditList,
+    accountBalance: this.calcBalance(creditList, this.state.debitList),
+  });
+  e.target.reset();
+};
 
   // Balance = total credits - total debits
   calcBalance = (credits = this.state.creditList, debits = this.state.debitList) => {
@@ -77,7 +93,13 @@ class App extends Component {
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />);
 
     // Pass lists to pages (forms come in later branches)
-    const CreditsComponent = () => (<Credits credits={this.state.creditList} />);
+    const CreditsComponent = () => (
+      <Credits
+        credits={this.state.creditList}
+        addCredit={this.addCredit}
+        accountBalance={this.state.accountBalance}
+      />
+    );
     const DebitsComponent  = () => (<Debits  debits={this.state.debitList}  />);
 
     return (
